@@ -9,4 +9,3 @@ public class Proyecto_abd_fase1 {
        new menu().setVisible(true);
     }
 }
-   

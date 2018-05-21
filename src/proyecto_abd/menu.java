@@ -67,6 +67,7 @@ public class menu extends javax.swing.JFrame {
         });
 
         jButton4.setText("3) Restricciones en el esquema-tabla y Tipo");
+        jButton4.setToolTipText("");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
@@ -116,6 +117,7 @@ public class menu extends javax.swing.JFrame {
         });
 
         jButton11.setText(" 10) Factor de Bloqueo, SYSTEM");
+        jButton11.setActionCommand(" 10) Factor de Bloqueo");
         jButton11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton11ActionPerformed(evt);
