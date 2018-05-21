@@ -1,0 +1,30 @@
+Instrucciones para ejecutar los archivos SQL:
+
+1. Instalar Oracle 11g Express si no lo ha hecho todavia.
+
+2. Abrir la consola SQL*Plus y conectarse con el usuario SYSTEM
+   y la clave que Ud. haya colocado durante la instalacion de
+   Oracle.
+
+3. Abra el archivo repositorio_create.sql y modifique los passwords y las rutas
+   a su conveninencia. El password del usuario repositorio no puede ser igual al de System o Sys y no puede ser solo numérico.
+
+4. Guarde los cambios en el archivo y luego ejecutelo.
+
+
+9. Para ejecutar cualquiera de los archivos provistos utilice la
+   sentencia SQL: start o @ indicandole la ruta en donde esta
+   ubicado el archivo SQL a ejecutar. Ejemplo:
+
+   SQL> start C:\Users\User\Desktop\repositorio_esqueme\repositorio_create.sql
+
+   Si esta instruccion presenta algun problema, pruebe a colocar
+   comillas simples a la ruta del archivo, asi:
+
+   SQL> start 'C:\Users\User\Desktop\repositorio_esqueme\repositorio_create.sql'
+
+   Recuerde que la notacion:
+
+   SQL> @ C:\Users\User\Desktop\reposito_esqueme\repositorio_create.sql
+
+   tambien es valida.

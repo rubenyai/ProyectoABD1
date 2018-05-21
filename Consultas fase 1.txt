@@ -1,0 +1,34 @@
+1.	Nombre de las tablas e índices de la base de datos.
+SELECT DISTINCT i.INDEX_NAME , t.TABLE_NAME FROM USER_INDEXES i,  USER_TABLES t WHERE I.TABLE_NAME=t.TABLE_NAME ORDER by t.TABLE_NAME;
+
+2.	Cantidad de tablas y los índices por cada tabla.
+SELECT DISTINCT COUNT( i.INDEX_NAME), t.TABLE_NAME FROM USER_INDEXES i,  USER_TABLES t WHERE I.TABLE_NAME=t.TABLE_NAME GROUP BY t.TABLE_NAME ORDER by t.TABLE_NAME;
+
+3.	Indicar las restricciones en el esquema, a que tabla pertenece y su tipo.
+SELECT  CONSTRAINT_NAME, TABLE_NAME, CONSTRAINT_TYPE FROM  USER_CONSTRAINTS ORDER BY CONSTRAINT_TYPE";
+
+4.	Espacio disponible en los tablespace creados en el repositorio.
+SELECT TABLESPACE_NAME,BYTES FROM USER_FREE_SPACE;
+
+5.	De los índices que se encuentran creados en el repositorio, liste la(s) columnas que conforman el índice, su unicidad,
+el tablespace donde se encuentra almacenado y 3 parámetros de almacenamiento (clausula storage) que usted escoja.
+SELECT DISTINCT uic.COLUMN_NAME ,COUNT(uic.COLUMN_NAME), ut.TABLESPACE_NAME
+FROM USER_IND_COLUMNS uic, USER_TABLESPACES ut GROUP BY uic.COLUMN_NAME, ut.TABLESPACE_NAME ORDER BY uic.COLUMN_NAME;
+
+6.	Por cada trigger en el esquema, debe indicar su nombre, tipo, status y tabla que lo activa.
+SELECT TRIGGER_NAME, TRIGGER_TYPE, STATUS, TABLE_NAME FROM USER_TRIGGERS;
+
+7.	El tamaño de las tablas en bloques.
+SELECT SUM(BYTES)*COUNT(segment_name) / 8192*5 FROM user_segments WHERE segment_type = 'TABLE';
+
+8.	El tamaño de cada registro (en bytes).
+SELECT us.segment_name, sum(utc.DATA_LENGTH) FROM user_segments us, USER_TAB_COLUMNS utc WHERE segment_type = 'TABLE' GROUP BY SEGMENT_NAME;
+
+9.	El tamaño de cada columna (en bytes).
+SELECT us.segment_name, utc.COLUMN_NAME, sum(utc.DATA_LENGTH) FROM user_segments us, USER_TAB_COLUMNS utc WHERE segment_type = 'TABLE' GROUP BY us.SEGMENT_NAME,
+utc.column_name ORDER BY US.SEGMENT_NAME;
+
+10.	El Factor de bloqueo de las tablas e índices (este valor lo debe calcular el sistema, se asume registros fijos no extensibles).
+SELECT ROUND(8192/ sum( NUM_DISTINCT), 0) FROM USER_TAB_COLUMNS;
+
+11.	Dada una consulta de igualdad sobre un campo en una tabla, indicar si se usan índices y calcular el costo en función de números de accesos a disco y en tiempo.
