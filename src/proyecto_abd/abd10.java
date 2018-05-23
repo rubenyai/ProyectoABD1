@@ -31,7 +31,7 @@ DefaultTableModel dtm;
         initComponents();
                 try {
 		Class.forName("oracle.jdbc.OracleDriver");
-		con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "yaimeru858" );  
+		con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "repositorio", "abd123" );  
                 ps=con.prepareStatement("SELECT ROUND(8192/ sum( NUM_DISTINCT), 0) FROM USER_TAB_COLUMNS");
                 rs=ps.executeQuery();
                 rsm=rs.getMetaData();

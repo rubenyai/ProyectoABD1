@@ -116,7 +116,7 @@ public class menu extends javax.swing.JFrame {
             }
         });
 
-        jButton11.setText(" 10) Factor de Bloqueo, SYSTEM");
+        jButton11.setText(" 10) Factor de Bloqueo");
         jButton11.setActionCommand(" 10) Factor de Bloqueo");
         jButton11.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
