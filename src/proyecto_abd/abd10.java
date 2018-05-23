@@ -32,7 +32,7 @@ DefaultTableModel dtm;
                 try {
 		Class.forName("oracle.jdbc.OracleDriver");
 		con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "repositorio", "abd123" );  
-                ps=con.prepareStatement("SELECT ROUND(8192/ sum( NUM_DISTINCT), 0) FROM USER_TAB_COLUMNS");
+                ps=con.prepareStatement("select table_name, round (8192/sum(data_length)) from user_tab_columns group by table_name");
                 rs=ps.executeQuery();
                 rsm=rs.getMetaData();
                 
@@ -55,7 +55,41 @@ DefaultTableModel dtm;
               
 		} catch (ClassNotFoundException | SQLException e){
                 JOptionPane.showMessageDialog(rootPane, e.getMessage());
+                }
+    /////////////////////////////            
+    //
+    // AHORA INDICES
+    //
+    ////////////////////////////                     
+                try {
+		Class.forName("oracle.jdbc.OracleDriver");
+		con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "repositorio", "abd123" );  
+                ps=con.prepareStatement("SELECT USER_TAB_COLUMNS.TABLE_NAME, USER_IND_COLUMNS.INDEX_NAME, round(8192/SUM(USER_TAB_COLUMNS.DATA_LENGTH)+6)\n"
+                 +"AS SUMA FROM USER_TAB_COLUMNS, USER_IND_COLUMNS WHERE USER_TAB_COLUMNS.TABLE_NAME = USER_IND_COLUMNS.TABLE_NAME AND\n "
+                 + "USER_TAB_COLUMNS.COLUMN_NAME = USER_IND_COLUMNS.COLUMN_NAME GROUP BY USER_TAB_COLUMNS.TABLE_NAME,\n "
+                 + "USER_IND_COLUMNS.INDEX_NAME ORDER BY USER_TAB_COLUMNS.TABLE_NAME");
+                rs=ps.executeQuery();
+                rsm=rs.getMetaData();
                 
+             ArrayList <Object[]> data= new ArrayList<>();
+             
+         
+          while (rs.next()){
+              Object[] rows= new Object[rsm.getColumnCount()];
+              for(int i=0;i<rows.length;i++){
+              rows[i]=rs.getObject(i+1);
+              }
+              data.add(rows);
+          }
+              dtm=(DefaultTableModel)this.jTable2.getModel();
+                
+              for(int i =0; i< data.size(); i++){
+              dtm.addRow(data.get(i)); 
+             
+              }
+              
+		} catch (ClassNotFoundException | SQLException e){
+                JOptionPane.showMessageDialog(rootPane, e.getMessage());
                 }
     }
 
@@ -72,6 +106,8 @@ DefaultTableModel dtm;
         jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -80,11 +116,11 @@ DefaultTableModel dtm;
 
             },
             new String [] {
-                "Factor de Bloqueo"
+                "Tabla", "Factor de Bloqueo"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -102,6 +138,24 @@ DefaultTableModel dtm;
             }
         });
 
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Tabla", "Indice", "Factor de Bloqueo"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(jTable2);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -109,18 +163,20 @@ DefaultTableModel dtm;
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(69, 69, 69)
-                                .addComponent(jLabel1)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 537, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(19, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 482, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(240, 240, 240))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -128,10 +184,12 @@ DefaultTableModel dtm;
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -186,6 +244,8 @@ DefaultTableModel dtm;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     // End of variables declaration//GEN-END:variables
 }
